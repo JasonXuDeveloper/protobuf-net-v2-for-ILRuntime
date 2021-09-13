@@ -2,6 +2,8 @@
 
 适配了ILRuntime的protobuf-net
 
+该部分代码已在隔壁[JEngine框架](https://github.com/JasonXuDeveloper/JEngine)使用了大半年了，稳得很
+
 ## 注意
 
 不要继承IExtensible，不要继承IExtensible，不要继承IExtensible！
