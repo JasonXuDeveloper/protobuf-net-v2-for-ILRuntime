@@ -28,7 +28,12 @@
 
 ## 代码导出
 支持C#文件和proto文件互转
-
+- 引用命名空间
+  ```c#
+  using System.IO;
+  using ProtoBuf.Reflection;
+  using Google.Protobuf.Reflection;
+  ```
 - proto转C#
   ```c#
   var set = new FileDescriptorSet();
