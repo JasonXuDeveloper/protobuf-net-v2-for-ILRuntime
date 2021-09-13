@@ -10,6 +10,13 @@
 
 用生成出来的C#文件！
 
+使用前需要在ILRuntime加载AppDomain之前注册一下：
+
+```c#
+//Protobuf适配
+PType.RegisterILRuntimeCLRRedirection(appdomain);
+```
+
 ## 版本说明
 
 - 魔改的是protobuf-net v2，具体是v2.x我就忘了，估计v2.4.1
