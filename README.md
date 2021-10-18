@@ -17,6 +17,9 @@
 PType.RegisterILRuntimeCLRRedirection(appdomain);
 ```
 
+## 限制
+1. ProtoMember标签只能有一个int字段，不能有其他的，参考[ILRuntime issue #593](https://github.com/Ourpalm/ILRuntime/issues/593)
+
 ## 版本说明
 
 - 魔改的是protobuf-net v2，具体是v2.x我就忘了，估计v2.4.1
