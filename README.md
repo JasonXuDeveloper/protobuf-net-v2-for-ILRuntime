@@ -18,7 +18,8 @@ PType.RegisterILRuntimeCLRRedirection(appdomain);
 ```
 
 ## 限制
-1. ProtoMember标签只能有一个int字段，不能有其他的，参考[ILRuntime issue #593](https://github.com/Ourpalm/ILRuntime/issues/593)
+1. ProtoMember标签只能有一个int字段，不能有其他的（某些情况可以，参考后面的链接），参考[ILRuntime issue #593](https://github.com/Ourpalm/ILRuntime/issues/593)
+2. Property不能就```{get;set;}```，轻则报错空引用，重则闪退
 
 ## 版本说明
 
