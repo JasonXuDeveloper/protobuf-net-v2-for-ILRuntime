@@ -363,7 +363,8 @@ namespace ProtoBuf.Reflection
             var typeName = GetTypeName(ctx, obj, out dataFormat, out isMap);
             if (!string.IsNullOrWhiteSpace(dataFormat))
             {
-                tw.Write($", DataFormat = global::ProtoBuf.DataFormat.{dataFormat}");
+                // 2022.1.3 as ilruntime does not support this feature
+                // tw.Write($", DataFormat = global::ProtoBuf.DataFormat.{dataFormat}");
             }
             if (obj.IsPacked(ctx.Syntax))
             {
@@ -384,36 +385,39 @@ namespace ProtoBuf.Reflection
                 var mapMsgType = isMap ? ctx.TryFind<DescriptorProto>(obj.TypeName) : null;
                 if (mapMsgType != null)
                 {
-                    string keyDataFormat;
-                    bool _;
-                    var keyTypeName = GetTypeName(ctx, mapMsgType.Fields.Single(x => x.Number == 1),
-                        out keyDataFormat, out _);
-                    string valueDataFormat;
-                    var valueTypeName = GetTypeName(ctx, mapMsgType.Fields.Single(x => x.Number == 2),
-                        out valueDataFormat, out _);
-
-                    bool first = true;
-                    tw = ctx.Write($"[global::ProtoBuf.ProtoMap");
-                    if (!string.IsNullOrWhiteSpace(keyDataFormat))
-                    {
-                        tw.Write($"{(first ? "(" : ", ")}KeyFormat = global::ProtoBuf.DataFormat.{keyDataFormat}");
-                        first = false;
-                    }
-                    if (!string.IsNullOrWhiteSpace(valueDataFormat))
-                    {
-                        tw.Write($"{(first ? "(" : ", ")}ValueFormat = global::ProtoBuf.DataFormat.{valueDataFormat}");
-                        first = false;
-                    }
-                    tw.WriteLine(first ? "]" : ")]");
-                    ctx.WriteLine($"{GetAccess(GetAccess(obj))} global::System.Collections.Generic.Dictionary<{keyTypeName}, {valueTypeName}> {Escape(name)} {{ get; }} = new global::System.Collections.Generic.Dictionary<{keyTypeName}, {valueTypeName}>();");
+                    // 2022.1.3 as ilruntime does not support this feature
+                    // string keyDataFormat;
+                    // bool _;
+                    // var keyTypeName = GetTypeName(ctx, mapMsgType.Fields.Single(x => x.Number == 1),
+                    //     out keyDataFormat, out _);
+                    // string valueDataFormat;
+                    // var valueTypeName = GetTypeName(ctx, mapMsgType.Fields.Single(x => x.Number == 2),
+                    //     out valueDataFormat, out _);
+                    //
+                    // bool first = true;
+                    // tw = ctx.Write($"[global::ProtoBuf.ProtoMap");
+                    // if (!string.IsNullOrWhiteSpace(keyDataFormat))
+                    // {
+                    //     tw.Write($"{(first ? "(" : ", ")}KeyFormat = global::ProtoBuf.DataFormat.{keyDataFormat}");
+                    //     first = false;
+                    // }
+                    // if (!string.IsNullOrWhiteSpace(valueDataFormat))
+                    // {
+                    //     tw.Write($"{(first ? "(" : ", ")}ValueFormat = global::ProtoBuf.DataFormat.{valueDataFormat}");
+                    //     first = false;
+                    // }
+                    // tw.WriteLine(first ? "]" : ")]");
+                    // ctx.WriteLine($"{GetAccess(GetAccess(obj))} global::System.Collections.Generic.Dictionary<{keyTypeName}, {valueTypeName}> {Escape(name)} {{ get; }} = new global::System.Collections.Generic.Dictionary<{keyTypeName}, {valueTypeName}>();");
                 }
                 else if (UseArray(obj))
                 {
-                    ctx.WriteLine($"{GetAccess(GetAccess(obj))} {typeName}[] {Escape(name)} {{ get; set; }}");
+                    // 2022.1.3 as ilruntime does not support this feature
+                    // ctx.WriteLine($"{GetAccess(GetAccess(obj))} {typeName}[] {Escape(name)} {{ get; set; }}");
+                    ctx.WriteLine($"{GetAccess(GetAccess(obj))} {typeName}[] {Escape(name)};");
                 }
                 else
                 {
-                    ctx.WriteLine($"{GetAccess(GetAccess(obj))} global::System.Collections.Generic.List<{typeName}> {Escape(name)} {{ get; }} = new global::System.Collections.Generic.List<{typeName}>();");
+                    ctx.WriteLine($"{GetAccess(GetAccess(obj))} global::System.Collections.Generic.List<{typeName}> {Escape(name)} = new global::System.Collections.Generic.List<{typeName}>();");
                 }
             }
             else if (oneOf != null)
@@ -482,8 +486,11 @@ namespace ProtoBuf.Reflection
             }
             else
             {
-                tw = ctx.Write($"{GetAccess(GetAccess(obj))} {typeName} {Escape(name)} {{ get; set; }}");
-                if (!string.IsNullOrWhiteSpace(defaultValue)) tw.Write($" = {defaultValue};");
+                // 2022.1.3 as ilruntime does not support this feature
+                // tw = ctx.Write($"{GetAccess(GetAccess(obj))} {typeName} {Escape(name)} {{ get; set; }}");
+                tw = ctx.Write($"{GetAccess(GetAccess(obj))} {typeName} {Escape(name)}");
+                // if (!string.IsNullOrWhiteSpace(defaultValue)) tw.Write($" = {defaultValue};");
+                tw.Write(!string.IsNullOrWhiteSpace(defaultValue) ? $" = {defaultValue};" : ";");
                 tw.WriteLine();
             }
             ctx.WriteLine();
