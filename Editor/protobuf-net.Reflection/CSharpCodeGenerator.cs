@@ -386,16 +386,16 @@ namespace ProtoBuf.Reflection
                 if (mapMsgType != null)
                 {
                     // 2022.1.3 as ilruntime does not support this feature
-                    // string keyDataFormat;
-                    // bool _;
-                    // var keyTypeName = GetTypeName(ctx, mapMsgType.Fields.Single(x => x.Number == 1),
-                    //     out keyDataFormat, out _);
-                    // string valueDataFormat;
-                    // var valueTypeName = GetTypeName(ctx, mapMsgType.Fields.Single(x => x.Number == 2),
-                    //     out valueDataFormat, out _);
-                    //
-                    // bool first = true;
-                    // tw = ctx.Write($"[global::ProtoBuf.ProtoMap");
+                    string keyDataFormat;
+                    bool _;
+                    var keyTypeName = GetTypeName(ctx, mapMsgType.Fields.Single(x => x.Number == 1),
+                        out keyDataFormat, out _);
+                    string valueDataFormat;
+                    var valueTypeName = GetTypeName(ctx, mapMsgType.Fields.Single(x => x.Number == 2),
+                        out valueDataFormat, out _);
+                    
+                    bool first = true;
+                    tw = ctx.Write($"[global::ProtoBuf.ProtoMap");
                     // if (!string.IsNullOrWhiteSpace(keyDataFormat))
                     // {
                     //     tw.Write($"{(first ? "(" : ", ")}KeyFormat = global::ProtoBuf.DataFormat.{keyDataFormat}");
@@ -406,8 +406,9 @@ namespace ProtoBuf.Reflection
                     //     tw.Write($"{(first ? "(" : ", ")}ValueFormat = global::ProtoBuf.DataFormat.{valueDataFormat}");
                     //     first = false;
                     // }
-                    // tw.WriteLine(first ? "]" : ")]");
+                    tw.WriteLine(first ? "]" : ")]");
                     // ctx.WriteLine($"{GetAccess(GetAccess(obj))} global::System.Collections.Generic.Dictionary<{keyTypeName}, {valueTypeName}> {Escape(name)} {{ get; }} = new global::System.Collections.Generic.Dictionary<{keyTypeName}, {valueTypeName}>();");
+                    ctx.WriteLine($"{GetAccess(GetAccess(obj))} global::System.Collections.Generic.Dictionary<{keyTypeName}, {valueTypeName}> {Escape(name)} = new global::System.Collections.Generic.Dictionary<{keyTypeName}, {valueTypeName}>();");
                 }
                 else if (UseArray(obj))
                 {
