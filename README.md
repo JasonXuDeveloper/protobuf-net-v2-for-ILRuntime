@@ -21,7 +21,7 @@ public void Register()
 {
   //注册pb反序列化
   Type pbSerializeType = typeof(Serializer);
-  args = new[] {typeof(Type), typeof(Stream)};
+  var args = new[] {typeof(Type), typeof(Stream)};
   var pbDeserializeMethod = pbSerializeType.GetMethod("Deserialize", flag, null, args, null);
   appdomain.RegisterCLRMethodRedirection(pbDeserializeMethod, Deserialize_1);
   args = new[] {typeof(ILTypeInstance)};
