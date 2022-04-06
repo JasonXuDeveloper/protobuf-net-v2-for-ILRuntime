@@ -130,6 +130,7 @@ private static unsafe StackObject* Deserialize_2(ILIntepreter __intp, StackObjec
 
 - 魔改的是protobuf-net v2，具体是v2.x我就忘了，估计v2.4.1
 - 支持proto2协议，proto3的话你用一些基础的特性应该都支持
+- 确保协议在客户端和服务端一致，同proto文件可以先客户端生成c#文件，然后用生成的c#导出proto后同步给服务端使用，以免前后端协议不一致导致问题
 
 ## 支持的类型
 - 主工程类型
