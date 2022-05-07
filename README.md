@@ -139,10 +139,11 @@ private static unsafe StackObject* Deserialize_2(ILIntepreter __intp, StackObjec
 - 列表（热更/非热更的都可以）
 - 枚举（热更/非热更的都可以）
 - 基础的Nullable类型（```Nullable<int>```之类的）
+- 热更工程定义的泛型+热更工程的泛型参数
 
 ## 暂不支持的类型
 - 带有热更类型的字典（map内部热更类型）
-- 泛型（似乎暂不支持，可以试试）
+- 主工程定义的泛型+热更类型的泛型参数
 
 ## 代码导出
 支持C#文件和proto文件互转

@@ -1,104 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ILRuntime.Runtime.Intepreter;
+using UnityEngine;
 
-namespace ProtoBuf{
-	public class PType
+namespace ProtoBuf
+{
+	public static class PType
 	{
-		static PType m_Current;
-	    static PType Current
-	    {
-	        get
-	        { 
-				if (m_Current == null) {
-					m_Current = new PType ();
-				}
-	            return m_Current;
-	        }
-	    }
-		Dictionary<string, Type> m_Types = new Dictionary<string, Type>();
-		
-	    private PType() { }
-
-	    void RegisterTypeInternal(string metaName, Type type)
-	    {
-            m_Types[metaName] = type;
-			//if (!m_Types.ContainsKey(metaName))
-	   //     {
-				//m_Types.Add(metaName,type);
-	   //     }
-	   //     else
-				//throw new SystemException(string.Format("PropertyMeta : {0} is registered!",metaName));
-	    }
-
-		Type FindTypeInternal(string metaName)
-		{
-			Type type = null;
-			if (!m_Types.TryGetValue(metaName, out type))
-			{
-				throw new SystemException(string.Format("PropertyMeta : {0} is not registered!", metaName));
-			}
-			return type;
-		}
-
-		public static void RegisterType(string metaName, Type type)
-	    {
-			Current.RegisterTypeInternal(metaName, type);
-	    }
-
-		public delegate object DelegateFunctionCreateInstance(string typeName);
-		static DelegateFunctionCreateInstance CreateInstanceFunc;
-		private static void RegisterFunctionCreateInstance(DelegateFunctionCreateInstance func){
-			CreateInstanceFunc = func;
-		}
-		public delegate Type DelegateFunctionGetRealType(object o);
-		static DelegateFunctionGetRealType GetRealTypeFunc;
-		private static void RegisterFunctionGetRealType(DelegateFunctionGetRealType func){
-			GetRealTypeFunc = func;
-		}
+		private static ILRuntime.Runtime.Enviorment.AppDomain appdomain;
+		private static readonly Dictionary<string, Type> ilruntimeTypes = new Dictionary<string, Type>();
 
 		public static Type FindType(string metaName)
 		{
-			return Current.FindTypeInternal(metaName);
+			ilruntimeTypes.TryGetValue(metaName, out Type type);
+			return type;
 		}
 
-		public static object CreateInstance(Type type){
-			if (Type.GetType (type.FullName) == null) {
-				if (CreateInstanceFunc != null) {
-					return CreateInstanceFunc.Invoke(type.FullName);
-				}
-			}
-			return Activator.CreateInstance (type
-				#if !(CF || SILVERLIGHT || WINRT || PORTABLE || NETSTANDARD1_3 || NETSTANDARD1_4)
-				, nonPublic: true
-				#endif
-			);
-		}
-		public static Type GetPType(object o){
-			if (GetRealTypeFunc != null) {
-				return GetRealTypeFunc.Invoke (o);
-			}
-			return o.GetType ();
-		}
-
-		public static void RegisterILRuntimeCLRRedirection(ILRuntime.Runtime.Enviorment.AppDomain appdomain)
+		public static object CreateInstance(Type type)
 		{
-			RegisterFunctionCreateInstance(typeName => appdomain.Instantiate(typeName));
-			RegisterFunctionGetRealType(o =>
+			string typeName = type.FullName;
+			if (FindType(typeName) != null)
 			{
-				Type type;
-				if (o is ILTypeInstance ins)
-				{
-					type = ins.Type.ReflectionType;
-					RegisterType(type.FullName, type); //自动注册一下
-				}
-				else
-				{
-					type = o.GetType();
-				}
+				return appdomain.Instantiate(typeName);
+			}
 
-				return type;
-			});
+			if (typeName != null && appdomain.LoadedTypes.ContainsKey(typeName))
+			{
+				ilruntimeTypes[typeName] = type;
+				return appdomain.Instantiate(typeName);
+			}
+			return Activator.CreateInstance(type);
+		}
+
+		public static Type GetPType(object o)
+		{
+			Type type;
+			if (o is ILTypeInstance ins)
+			{
+				type = ins.Type.ReflectionType;
+			}
+			else
+			{
+				type = o.GetType();
+			}
+
+			return type;
+		}
+
+		public static void RegisterILRuntimeCLRRedirection(ILRuntime.Runtime.Enviorment.AppDomain domain)
+		{
+			appdomain = domain;
+			var allTypes = domain.LoadedTypes.Values.Select(x => x.ReflectionType).ToArray();
+			foreach (var type in allTypes)
+			{
+				if (type.FullName != null) ilruntimeTypes[type.FullName] = type;
+			}
 		}
 	}
-}
+} 
