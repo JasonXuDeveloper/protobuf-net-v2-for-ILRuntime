@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ILRuntime.Reflection;
 using ILRuntime.Runtime.Intepreter;
 using UnityEngine;
 
@@ -19,6 +20,7 @@ namespace ProtoBuf
 
 		public static object CreateInstance(Type type)
 		{
+			if (!(type is ILRuntimeType)) return Activator.CreateInstance(type);
 			string typeName = type.FullName;
 			if (FindType(typeName) != null)
 			{
@@ -30,7 +32,8 @@ namespace ProtoBuf
 				ilruntimeTypes[typeName] = type;
 				return appdomain.Instantiate(typeName);
 			}
-			return Activator.CreateInstance(type);
+
+			return null;
 		}
 
 		public static Type GetPType(object o)
